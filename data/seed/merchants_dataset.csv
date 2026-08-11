@@ -1,0 +1,71 @@
+merchant_id,merchant_name,business_type,industry,email,phone,city,state,country,onboarding_date,verification_status,risk_level,settlement_cycle,created_at,updated_at
+MER000001,Acme Retail Pvt Ltd,Private Limited,Retail,finance1@acmeretail.com,+918906402157,Bengaluru,Karnataka,India,2025-01-24,Verified,Low,T+1,2025-01-24 00:00:00,2025-01-24 00:00:00
+MER000002,NovaPay Technologies Pvt Ltd,LLP,FinTech,finance2@novapaytech.com,+918170484433,Jaipur,Rajasthan,India,2023-08-12,Verified,Low,T+1,2023-08-12 00:00:00,2023-08-12 00:00:00
+MER000003,QuickCart Commerce Pvt Ltd,Sole Proprietorship,E-Commerce,finance3@quickcartcommerce.com,+916946785248,Kochi,Kerala,India,2024-07-12,Verified,Low,T+1,2024-07-12 00:00:00,2024-07-12 00:00:00
+MER000004,UrbanNest Realty Pvt Ltd,LLP,Real Estate,finance4@urbannestrealty.com,+918998485882,Kolkata,West Bengal,India,2025-04-05,Verified,Medium,T+1,2025-04-05 00:00:00,2025-04-05 00:00:00
+MER000005,SwiftLog Logistics Pvt Ltd,Private Limited,Logistics,finance5@swiftloglogistics.com,+916398340369,Ahmedabad,Gujarat,India,2023-12-11,Verified,Low,Weekly,2023-12-11 00:00:00,2023-12-11 00:00:00
+MER000006,HealthBridge Care Pvt Ltd,Private Limited,Healthcare,finance6@healthbridgecare.com,+919134174160,Ahmedabad,Gujarat,India,2025-04-06,Verified,Medium,T+1,2025-04-06 00:00:00,2025-04-06 00:00:00
+MER000007,LearnSphere Education Pvt Ltd,Partnership,Education,finance7@learnsphereeducation.com,+919562265906,Kolkata,West Bengal,India,2024-07-19,Verified,High,T+1,2024-07-19 00:00:00,2024-07-19 00:00:00
+MER000008,FinCore Solutions Pvt Ltd,Private Limited,FinTech,finance8@fincoresolutions.com,+918840104345,Kochi,Kerala,India,2023-03-13,Verified,Low,T+1,2023-03-13 00:00:00,2023-03-13 00:00:00
+MER000009,CloudAxis SaaS Pvt Ltd,Private Limited,SaaS,finance9@cloudaxissaas.com,+917632629719,Pune,Maharashtra,India,2025-06-06,Verified,High,T+2,2025-06-06 00:00:00,2025-06-06 00:00:00
+MER000010,FreshBasket Foods Pvt Ltd,LLP,Food Delivery,finance10@freshbasketfoods.com,+918878380452,Delhi,Delhi,India,2023-12-30,Verified,Medium,T+1,2023-12-30 00:00:00,2023-12-30 00:00:00
+MER000011,TravelNest Pvt Ltd,LLP,Travel,finance11@travelnest.com,+918294113287,Delhi,Delhi,India,2024-10-12,Verified,Low,T+1,2024-10-12 00:00:00,2024-10-12 00:00:00
+MER000012,PixelPlay Gaming Pvt Ltd,Public Limited,Gaming,finance12@pixelplaygaming.com,+916943239974,Pune,Maharashtra,India,2024-10-17,Verified,Low,Weekly,2024-10-17 00:00:00,2024-10-17 00:00:00
+MER000013,StreamWave Media Pvt Ltd,Partnership,Entertainment,finance13@streamwavemedia.com,+917722989659,Chennai,Tamil Nadu,India,2023-02-02,Verified,Medium,T+1,2023-02-02 00:00:00,2023-02-02 00:00:00
+MER000014,GreenLeaf Retail Pvt Ltd,Partnership,Retail,finance14@greenleafretail.com,+916913224047,Delhi,Delhi,India,2025-01-05,Verified,Medium,T+1,2025-01-05 00:00:00,2025-01-05 00:00:00
+MER000015,CargoLink Pvt Ltd,LLP,Logistics,finance15@cargolink.com,+917059257080,Kolkata,West Bengal,India,2023-09-29,Verified,Medium,T+1,2023-09-29 00:00:00,2023-09-29 00:00:00
+MER000016,MediPulse Pvt Ltd,Sole Proprietorship,Healthcare,finance16@medipulse.com,+917554762903,Jaipur,Rajasthan,India,2024-08-20,Verified,Low,T+1,2024-08-20 00:00:00,2024-08-20 00:00:00
+MER000017,SkillForge Pvt Ltd,Private Limited,Education,finance17@skillforge.com,+919246059658,Pune,Maharashtra,India,2024-05-20,Suspended,High,T+1,2024-05-20 00:00:00,2024-05-20 00:00:00
+MER000018,PrimeCommerce Pvt Ltd,Sole Proprietorship,E-Commerce,finance18@primecommerce.com,+918561557300,Mumbai,Maharashtra,India,2024-11-27,Verified,Low,T+1,2024-11-27 00:00:00,2024-11-27 00:00:00
+MER000019,FoodSprint Pvt Ltd,Public Limited,Food Delivery,finance19@foodsprint.com,+919697020653,Bengaluru,Karnataka,India,2023-09-15,Verified,Low,T+1,2023-09-15 00:00:00,2023-09-15 00:00:00
+MER000020,BluePeak Tech Pvt Ltd,Partnership,SaaS,finance20@bluepeaktech.com,+919301106403,Mumbai,Maharashtra,India,2025-02-07,Verified,Low,T+2,2025-02-07 00:00:00,2025-02-07 00:00:00
+MER000021,Acme Retail 2 Pvt Ltd,Partnership,Retail,finance21@acmeretail.com,+918150000991,Chennai,Tamil Nadu,India,2025-01-09,Verified,Low,T+1,2025-01-09 00:00:00,2025-01-09 00:00:00
+MER000022,NovaPay Technologies 2 Pvt Ltd,Public Limited,FinTech,finance22@novapaytech.com,+918615507143,Hyderabad,Telangana,India,2025-05-11,Verified,Low,T+1,2025-05-11 00:00:00,2025-05-11 00:00:00
+MER000023,QuickCart Commerce 2 Pvt Ltd,Public Limited,E-Commerce,finance23@quickcartcommerce.com,+919944899549,Pune,Maharashtra,India,2025-03-08,Verified,Medium,T+1,2025-03-08 00:00:00,2025-03-08 00:00:00
+MER000024,UrbanNest Realty 2 Pvt Ltd,Partnership,Real Estate,finance24@urbannestrealty.com,+917028439863,Mumbai,Maharashtra,India,2024-01-07,Verified,Low,T+1,2024-01-07 00:00:00,2024-01-07 00:00:00
+MER000025,SwiftLog Logistics 2 Pvt Ltd,Sole Proprietorship,Logistics,finance25@swiftloglogistics.com,+919504793184,Mumbai,Maharashtra,India,2025-01-19,Verified,Low,T+1,2025-01-19 00:00:00,2025-01-19 00:00:00
+MER000026,HealthBridge Care 2 Pvt Ltd,Sole Proprietorship,Healthcare,finance26@healthbridgecare.com,+918361388464,Bengaluru,Karnataka,India,2024-11-06,Pending,Low,T+1,2024-11-06 00:00:00,2024-11-06 00:00:00
+MER000027,LearnSphere Education 2 Pvt Ltd,Public Limited,Education,finance27@learnsphereeducation.com,+919243839315,Hyderabad,Telangana,India,2023-08-05,Verified,Medium,T+1,2023-08-05 00:00:00,2023-08-05 00:00:00
+MER000028,FinCore Solutions 2 Pvt Ltd,Sole Proprietorship,FinTech,finance28@fincoresolutions.com,+919863813067,Pune,Maharashtra,India,2024-01-18,Verified,Low,T+1,2024-01-18 00:00:00,2024-01-18 00:00:00
+MER000029,CloudAxis SaaS 2 Pvt Ltd,Public Limited,SaaS,finance29@cloudaxissaas.com,+918379074819,Jaipur,Rajasthan,India,2023-01-22,Verified,Low,T+1,2023-01-22 00:00:00,2023-01-22 00:00:00
+MER000030,FreshBasket Foods 2 Pvt Ltd,LLP,Food Delivery,finance30@freshbasketfoods.com,+916289482182,Pune,Maharashtra,India,2023-03-02,Verified,Low,T+2,2023-03-02 00:00:00,2023-03-02 00:00:00
+MER000031,TravelNest 2 Pvt Ltd,Sole Proprietorship,Travel,finance31@travelnest.com,+916920140090,Mumbai,Maharashtra,India,2024-11-16,Verified,Low,T+1,2024-11-16 00:00:00,2024-11-16 00:00:00
+MER000032,PixelPlay Gaming 2 Pvt Ltd,LLP,Gaming,finance32@pixelplaygaming.com,+919369914783,Jaipur,Rajasthan,India,2024-04-29,Verified,Medium,T+1,2024-04-29 00:00:00,2024-04-29 00:00:00
+MER000033,StreamWave Media 2 Pvt Ltd,Partnership,Entertainment,finance33@streamwavemedia.com,+917819256337,Kolkata,West Bengal,India,2024-03-17,Verified,Low,T+1,2024-03-17 00:00:00,2024-03-17 00:00:00
+MER000034,GreenLeaf Retail 2 Pvt Ltd,Private Limited,Retail,finance34@greenleafretail.com,+916260329455,Ahmedabad,Gujarat,India,2024-10-23,Verified,Low,T+1,2024-10-23 00:00:00,2024-10-23 00:00:00
+MER000035,CargoLink 2 Pvt Ltd,LLP,Logistics,finance35@cargolink.com,+918303329764,Ahmedabad,Gujarat,India,2023-07-16,Verified,Medium,T+1,2023-07-16 00:00:00,2023-07-16 00:00:00
+MER000036,MediPulse 2 Pvt Ltd,Private Limited,Healthcare,finance36@medipulse.com,+917903232052,Kolkata,West Bengal,India,2025-06-14,Verified,Low,T+1,2025-06-14 00:00:00,2025-06-14 00:00:00
+MER000037,SkillForge 2 Pvt Ltd,Private Limited,Education,finance37@skillforge.com,+919978715881,Jaipur,Rajasthan,India,2023-01-16,Verified,Low,T+1,2023-01-16 00:00:00,2023-01-16 00:00:00
+MER000038,PrimeCommerce 2 Pvt Ltd,Private Limited,E-Commerce,finance38@primecommerce.com,+916707111048,Pune,Maharashtra,India,2024-02-15,Verified,Low,T+1,2024-02-15 00:00:00,2024-02-15 00:00:00
+MER000039,FoodSprint 2 Pvt Ltd,Sole Proprietorship,Food Delivery,finance39@foodsprint.com,+917225136114,Ahmedabad,Gujarat,India,2025-03-14,Verified,Low,T+2,2025-03-14 00:00:00,2025-03-14 00:00:00
+MER000040,BluePeak Tech 2 Pvt Ltd,Sole Proprietorship,SaaS,finance40@bluepeaktech.com,+916664847319,Ahmedabad,Gujarat,India,2024-11-08,Verified,Low,T+2,2024-11-08 00:00:00,2024-11-08 00:00:00
+MER000041,Acme Retail 3 Pvt Ltd,Private Limited,Retail,finance41@acmeretail.com,+919212530587,Pune,Maharashtra,India,2024-07-09,Verified,High,T+1,2024-07-09 00:00:00,2024-07-09 00:00:00
+MER000042,NovaPay Technologies 3 Pvt Ltd,Public Limited,FinTech,finance42@novapaytech.com,+916676168421,Chennai,Tamil Nadu,India,2025-05-23,Verified,Low,T+1,2025-05-23 00:00:00,2025-05-23 00:00:00
+MER000043,QuickCart Commerce 3 Pvt Ltd,Private Limited,E-Commerce,finance43@quickcartcommerce.com,+918900015820,Mumbai,Maharashtra,India,2024-09-01,Pending,Low,T+1,2024-09-01 00:00:00,2024-09-01 00:00:00
+MER000044,UrbanNest Realty 3 Pvt Ltd,Public Limited,Real Estate,finance44@urbannestrealty.com,+916170689150,Pune,Maharashtra,India,2024-08-15,Verified,Medium,T+1,2024-08-15 00:00:00,2024-08-15 00:00:00
+MER000045,SwiftLog Logistics 3 Pvt Ltd,Partnership,Logistics,finance45@swiftloglogistics.com,+916877286584,Kochi,Kerala,India,2023-11-20,Verified,Low,T+1,2023-11-20 00:00:00,2023-11-20 00:00:00
+MER000046,HealthBridge Care 3 Pvt Ltd,Sole Proprietorship,Healthcare,finance46@healthbridgecare.com,+917357970698,Chennai,Tamil Nadu,India,2023-11-04,Verified,Low,T+1,2023-11-04 00:00:00,2023-11-04 00:00:00
+MER000047,LearnSphere Education 3 Pvt Ltd,Private Limited,Education,finance47@learnsphereeducation.com,+918309122187,Bengaluru,Karnataka,India,2023-04-13,Verified,Low,T+1,2023-04-13 00:00:00,2023-04-13 00:00:00
+MER000048,FinCore Solutions 3 Pvt Ltd,LLP,FinTech,finance48@fincoresolutions.com,+917587106770,Pune,Maharashtra,India,2023-03-12,Verified,Low,T+1,2023-03-12 00:00:00,2023-03-12 00:00:00
+MER000049,CloudAxis SaaS 3 Pvt Ltd,Public Limited,SaaS,finance49@cloudaxissaas.com,+916033599984,Delhi,Delhi,India,2024-09-18,Verified,Medium,T+2,2024-09-18 00:00:00,2024-09-18 00:00:00
+MER000050,FreshBasket Foods 3 Pvt Ltd,Partnership,Food Delivery,finance50@freshbasketfoods.com,+916495762348,Jaipur,Rajasthan,India,2023-05-18,Verified,Low,T+2,2023-05-18 00:00:00,2023-05-18 00:00:00
+MER000051,TravelNest 3 Pvt Ltd,Partnership,Travel,finance51@travelnest.com,+916874443787,Bengaluru,Karnataka,India,2023-08-04,Verified,Low,T+1,2023-08-04 00:00:00,2023-08-04 00:00:00
+MER000052,PixelPlay Gaming 3 Pvt Ltd,Private Limited,Gaming,finance52@pixelplaygaming.com,+918724230947,Delhi,Delhi,India,2023-02-22,Verified,Low,T+2,2023-02-22 00:00:00,2023-02-22 00:00:00
+MER000053,StreamWave Media 3 Pvt Ltd,Partnership,Entertainment,finance53@streamwavemedia.com,+916693989311,Ahmedabad,Gujarat,India,2023-05-14,Verified,Low,T+1,2023-05-14 00:00:00,2023-05-14 00:00:00
+MER000054,GreenLeaf Retail 3 Pvt Ltd,LLP,Retail,finance54@greenleafretail.com,+918343292475,Kolkata,West Bengal,India,2023-03-19,Verified,Low,T+1,2023-03-19 00:00:00,2023-03-19 00:00:00
+MER000055,CargoLink 3 Pvt Ltd,Private Limited,Logistics,finance55@cargolink.com,+917323959527,Mumbai,Maharashtra,India,2023-05-11,Verified,Low,T+1,2023-05-11 00:00:00,2023-05-11 00:00:00
+MER000056,MediPulse 3 Pvt Ltd,LLP,Healthcare,finance56@medipulse.com,+918929454134,Chennai,Tamil Nadu,India,2024-01-02,Verified,Medium,T+2,2024-01-02 00:00:00,2024-01-02 00:00:00
+MER000057,SkillForge 3 Pvt Ltd,Sole Proprietorship,Education,finance57@skillforge.com,+918665720874,Pune,Maharashtra,India,2025-06-14,Verified,Low,T+1,2025-06-14 00:00:00,2025-06-14 00:00:00
+MER000058,PrimeCommerce 3 Pvt Ltd,LLP,E-Commerce,finance58@primecommerce.com,+919785653776,Hyderabad,Telangana,India,2025-03-30,Pending,Low,T+1,2025-03-30 00:00:00,2025-03-30 00:00:00
+MER000059,FoodSprint 3 Pvt Ltd,LLP,Food Delivery,finance59@foodsprint.com,+917145921803,Ahmedabad,Gujarat,India,2024-02-26,Verified,Low,T+1,2024-02-26 00:00:00,2024-02-26 00:00:00
+MER000060,BluePeak Tech 3 Pvt Ltd,Sole Proprietorship,SaaS,finance60@bluepeaktech.com,+916955345537,Hyderabad,Telangana,India,2025-05-29,Verified,Low,T+2,2025-05-29 00:00:00,2025-05-29 00:00:00
+MER000061,Acme Retail 4 Pvt Ltd,LLP,Retail,finance61@acmeretail.com,+916957449367,Pune,Maharashtra,India,2025-03-25,Verified,Low,T+1,2025-03-25 00:00:00,2025-03-25 00:00:00
+MER000062,NovaPay Technologies 4 Pvt Ltd,Partnership,FinTech,finance62@novapaytech.com,+917508161137,Mumbai,Maharashtra,India,2023-03-13,Verified,Low,T+1,2023-03-13 00:00:00,2023-03-13 00:00:00
+MER000063,QuickCart Commerce 4 Pvt Ltd,Private Limited,E-Commerce,finance63@quickcartcommerce.com,+919766851291,Jaipur,Rajasthan,India,2023-01-29,Verified,High,T+1,2023-01-29 00:00:00,2023-01-29 00:00:00
+MER000064,UrbanNest Realty 4 Pvt Ltd,Public Limited,Real Estate,finance64@urbannestrealty.com,+917866437132,Delhi,Delhi,India,2023-04-22,Verified,High,T+1,2023-04-22 00:00:00,2023-04-22 00:00:00
+MER000065,SwiftLog Logistics 4 Pvt Ltd,Private Limited,Logistics,finance65@swiftloglogistics.com,+917654401763,Chennai,Tamil Nadu,India,2024-06-07,Verified,Low,T+1,2024-06-07 00:00:00,2024-06-07 00:00:00
+MER000066,HealthBridge Care 4 Pvt Ltd,Public Limited,Healthcare,finance66@healthbridgecare.com,+918950028965,Kochi,Kerala,India,2024-06-16,Verified,Low,T+1,2024-06-16 00:00:00,2024-06-16 00:00:00
+MER000067,LearnSphere Education 4 Pvt Ltd,Public Limited,Education,finance67@learnsphereeducation.com,+917348257414,Pune,Maharashtra,India,2023-12-05,Verified,Low,T+1,2023-12-05 00:00:00,2023-12-05 00:00:00
+MER000068,FinCore Solutions 4 Pvt Ltd,Partnership,FinTech,finance68@fincoresolutions.com,+917728296502,Bengaluru,Karnataka,India,2024-02-23,Verified,Low,T+1,2024-02-23 00:00:00,2024-02-23 00:00:00
+MER000069,CloudAxis SaaS 4 Pvt Ltd,LLP,SaaS,finance69@cloudaxissaas.com,+918643616431,Delhi,Delhi,India,2024-01-24,Verified,Low,T+1,2024-01-24 00:00:00,2024-01-24 00:00:00
+MER000070,FreshBasket Foods 4 Pvt Ltd,LLP,Food Delivery,finance70@freshbasketfoods.com,+917846355528,Kochi,Kerala,India,2023-10-21,Verified,Low,T+1,2023-10-21 00:00:00,2023-10-21 00:00:00

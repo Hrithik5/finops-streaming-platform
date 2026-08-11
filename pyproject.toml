@@ -1,0 +1,9 @@
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+ignore = ["TID252"]
+
+[tool.basedpyright]
+typeCheckingMode = "basic"

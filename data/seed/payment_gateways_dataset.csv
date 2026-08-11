@@ -1,0 +1,21 @@
+gateway_id,gateway_name,provider,gateway_type,status
+GTW001,Razorpay UPI,Razorpay,UPI,Active
+GTW002,PhonePe UPI,PhonePe,UPI,Active
+GTW003,Google Pay UPI,Google,UPI,Active
+GTW004,BHIM UPI,NPCI,UPI,Active
+GTW005,Visa Gateway,Visa,Card,Active
+GTW006,Mastercard Gateway,Mastercard,Card,Active
+GTW007,RuPay Gateway,NPCI,Card,Active
+GTW008,American Express,American Express,Card,Active
+GTW009,Paytm Wallet,Paytm,Wallet,Active
+GTW010,Amazon Pay,Amazon,Wallet,Active
+GTW011,Mobikwik Wallet,Mobikwik,Wallet,Active
+GTW012,Freecharge Wallet,Freecharge,Wallet,Active
+GTW013,HDFC NetBanking,HDFC Bank,Net Banking,Active
+GTW014,ICICI NetBanking,ICICI Bank,Net Banking,Active
+GTW015,SBI NetBanking,State Bank of India,Net Banking,Active
+GTW016,Axis NetBanking,Axis Bank,Net Banking,Maintenance
+GTW017,Kotak NetBanking,Kotak Mahindra Bank,Net Banking,Active
+GTW018,Yes Bank NetBanking,Yes Bank,Net Banking,Active
+GTW019,Airtel Money,Airtel,Wallet,Deprecated
+GTW020,CRED Pay,CRED,UPI,Active

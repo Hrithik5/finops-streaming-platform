@@ -1,0 +1,21 @@
+payment_method_id,payment_method_name,category,provider,status
+PM001,UPI,Digital Payment,NPCI,Active
+PM002,Credit Card,Card,Visa,Active
+PM003,Debit Card,Card,Mastercard,Active
+PM004,RuPay Card,Card,NPCI,Active
+PM005,Net Banking,Banking,Multiple Banks,Active
+PM006,Paytm Wallet,Wallet,Paytm,Active
+PM007,Amazon Pay Wallet,Wallet,Amazon,Active
+PM008,PhonePe Wallet,Wallet,PhonePe,Active
+PM009,Google Pay,UPI,Google,Active
+PM010,BHIM UPI,UPI,NPCI,Active
+PM011,EMI,Credit,Multiple Banks,Active
+PM012,Buy Now Pay Later,Credit,Simpl/ZestMoney,Active
+PM013,Gift Card,Voucher,Internal,Active
+PM014,Reward Points,Loyalty,Internal,Active
+PM015,Cashback Wallet,Wallet,Internal,Active
+PM016,Corporate Card,Card,Visa,Active
+PM017,International Card,Card,Visa/Mastercard,Active
+PM018,Apple Pay,Wallet,Apple,Coming Soon
+PM019,Samsung Pay,Wallet,Samsung,Coming Soon
+PM020,Crypto Payment,Digital Asset,Third Party,Deprecated
