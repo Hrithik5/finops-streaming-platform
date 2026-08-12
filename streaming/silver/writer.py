@@ -3,26 +3,52 @@ Silver layer writer.
 
 Responsibility:
 - Write validated Silver DataFrames to Delta tables.
-- Generate table names from Kafka topics.
+- Generate Silver table names from Kafka topics.
 
 No parsing.
 No transformations.
 No data quality logic.
 """
 
-
 from pyspark.sql import DataFrame
+
+
+# ---------------------------------------------------------------------
+# Topic → Silver Table Mapping
+# ---------------------------------------------------------------------
+
+TOPIC_TABLE_MAPPING = {
+    "merchant-events": "merchants",
+    "customer-events": "customers",
+    "invoice-events": "invoices",
+    "payment-events": "payments",
+    "refund-events": "refunds",
+    "chargeback-events": "chargebacks",
+    "settlement-events": "settlements",
+}
+
+
+# ---------------------------------------------------------------------
+# Table Name
+# ---------------------------------------------------------------------
 
 
 def topic_to_table_name(topic: str) -> str:
     """
-    Convert a Kafka topic name into a Silver table name.
-
-    Example:
-        payment-events -> payment_events
+    Convert a Kafka topic into its Silver table name.
     """
 
-    return topic.replace("-", "_")
+    if topic not in TOPIC_TABLE_MAPPING:
+        raise ValueError(
+            f"No Silver table mapping found for topic: {topic}"
+        )
+
+    return TOPIC_TABLE_MAPPING[topic]
+
+
+# ---------------------------------------------------------------------
+# Write Silver
+# ---------------------------------------------------------------------
 
 
 def write_silver(
@@ -45,5 +71,6 @@ def write_silver(
         df.write
         .format("delta")
         .mode("overwrite")
+        .option("overwriteSchema", "true")
         .saveAsTable(table_name)
     )

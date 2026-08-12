@@ -26,8 +26,11 @@ from streaming.silver.quality import (
     check_negative_values,
     check_required_columns,
 )
-from streaming.silver.writer import write_silver
 
+from streaming.silver.writer import (
+    topic_to_table_name,
+    write_silver,
+)
 # ---------------------------------------------------------------------
 # Read Bronze
 # ---------------------------------------------------------------------
@@ -172,6 +175,8 @@ for topic in EVENT_SCHEMAS:
     # Write Silver
     # -------------------------------------------------------------
 
+    table_name = topic_to_table_name(topic)
+
     write_silver(
         transformed_df,
         topic,
@@ -179,5 +184,5 @@ for topic in EVENT_SCHEMAS:
 
     print(
         f"Silver table written: "
-        f"dev.silver.{topic.replace('-', '_')}"
+        f"dev.silver.{table_name}"
     )
