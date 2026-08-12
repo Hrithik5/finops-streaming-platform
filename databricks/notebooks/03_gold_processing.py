@@ -17,6 +17,8 @@ from streaming.gold.metrics import (
     build_payment_performance,
 )
 
+from streaming.gold.writer import write_gold
+
 
 # =====================================================================
 # Read Silver Tables
@@ -222,36 +224,24 @@ display(
 # Write Gold Tables
 # =====================================================================
 
-(
-    payment_performance_df.write
-    .format("delta")
-    .mode("overwrite")
-    .option("overwriteSchema", "true")
-    .saveAsTable("dev.gold.payment_performance")
+write_gold(
+    payment_performance_df,
+    "dev.gold.payment_performance",
 )
 
-(
-    merchant_performance_df.write
-    .format("delta")
-    .mode("overwrite")
-    .option("overwriteSchema", "true")
-    .saveAsTable("dev.gold.merchant_performance")
+write_gold(
+    merchant_performance_df,
+    "dev.gold.merchant_performance",
 )
 
-(
-    gateway_performance_df.write
-    .format("delta")
-    .mode("overwrite")
-    .option("overwriteSchema", "true")
-    .saveAsTable("dev.gold.gateway_performance")
+write_gold(
+    gateway_performance_df,
+    "dev.gold.gateway_performance",
 )
 
-(
-    financial_operations_df.write
-    .format("delta")
-    .mode("overwrite")
-    .option("overwriteSchema", "true")
-    .saveAsTable("dev.gold.financial_operations")
+write_gold(
+    financial_operations_df,
+    "dev.gold.financial_operations",
 )
 
 
