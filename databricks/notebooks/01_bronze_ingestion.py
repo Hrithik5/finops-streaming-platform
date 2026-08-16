@@ -8,13 +8,18 @@ for the Bronze Delta layer.
 """
 
 from streaming.bronze.ingestion import (
-    read_kafka,
     prepare_bronze,
+    read_kafka,
     write_bronze,
 )
+from streaming.config import get_kafka_options
 
 
-TOPICS = [
+# ---------------------------------------------------------------------
+# Kafka Topics
+# ---------------------------------------------------------------------
+
+KAFKA_TOPICS = [
     "chargeback-events",
     "customer-events",
     "invoice-events",
@@ -28,10 +33,9 @@ TOPICS = [
 # ---------------------------------------------------------------------
 # Kafka Configuration
 # ---------------------------------------------------------------------
-# Loaded/provided at runtime.
-# Do NOT hardcode credentials in this notebook.
 
-kafka_options = {}
+# Credentials are retrieved from Databricks Secrets at runtime.
+KAFKA_OPTIONS = get_kafka_options(dbutils)
 
 
 # ---------------------------------------------------------------------
@@ -40,8 +44,8 @@ kafka_options = {}
 
 kafka_df = read_kafka(
     spark,
-    kafka_options,
-    TOPICS,
+    KAFKA_OPTIONS,
+    KAFKA_TOPICS,
 )
 
 
@@ -49,7 +53,9 @@ kafka_df = read_kafka(
 # Prepare Bronze
 # ---------------------------------------------------------------------
 
-bronze_df = prepare_bronze(kafka_df)
+bronze_df = prepare_bronze(
+    kafka_df,
+)
 
 
 # ---------------------------------------------------------------------
