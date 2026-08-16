@@ -5,10 +5,14 @@ Static Bronze → Silver pipeline.
 """
 
 from streaming.silver.static_parser import read_static_bronze
-from streaming.silver.static_transformer import transform_static
 from streaming.silver.static_quality import count_duplicates
+from streaming.silver.static_transformer import transform_static
 from streaming.silver.static_writer import write_static_silver
 
+
+# ---------------------------------------------------------------------
+# Static Datasets
+# ---------------------------------------------------------------------
 
 DATASETS = {
     "merchant_bank_accounts": {
@@ -29,32 +33,55 @@ DATASETS = {
 }
 
 
+# ---------------------------------------------------------------------
+# Process Each Dataset
+# ---------------------------------------------------------------------
+
 for dataset_name, config in DATASETS.items():
 
     bronze_table = f"dev.bronze.{dataset_name}"
     silver_table = f"dev.silver.{dataset_name}"
+
+    # -------------------------------------------------------------
+    # Read Bronze
+    # -------------------------------------------------------------
 
     df = read_static_bronze(
         spark,
         bronze_table,
     )
 
+    # -------------------------------------------------------------
+    # Transform
+    # -------------------------------------------------------------
+
     transformed_df = transform_static(df)
+
+    # -------------------------------------------------------------
+    # Data Quality
+    # -------------------------------------------------------------
 
     duplicates = count_duplicates(
         transformed_df,
         config["key_columns"],
     )
 
-    print(f"\n{'=' * 60}")
-    print(dataset_name)
-    print("=" * 60)
-    print(f"Rows       : {transformed_df.count()}")
-    print(f"Duplicates : {duplicates}")
+    if duplicates > 0:
+        raise ValueError(
+            f"{dataset_name}: "
+            f"{duplicates} duplicate records detected."
+        )
+
+    # -------------------------------------------------------------
+    # Write Silver
+    # -------------------------------------------------------------
 
     write_static_silver(
         transformed_df,
         silver_table,
     )
 
-    print(f"Written    : {silver_table}")
+    print(
+        f"Completed static Silver processing: "
+        f"{silver_table}"
+    )

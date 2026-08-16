@@ -13,24 +13,27 @@ Flow:
     Transform
       ↓
     Data Quality Validation
+      ↓
+    Silver
 """
 
 from streaming.silver.parser import (
     flatten_event,
     parse_event,
 )
-from streaming.silver.schemas import EVENT_SCHEMAS
-from streaming.silver.transformer import transform_event
 from streaming.silver.quality import (
     check_duplicate_events,
     check_negative_values,
     check_required_columns,
 )
-
+from streaming.silver.schemas import EVENT_SCHEMAS
+from streaming.silver.transformer import transform_event
 from streaming.silver.writer import (
     topic_to_table_name,
     write_silver,
 )
+
+
 # ---------------------------------------------------------------------
 # Read Bronze
 # ---------------------------------------------------------------------
@@ -113,25 +116,13 @@ for topic in EVENT_SCHEMAS:
         flattened_df,
     )
 
-    print(f"\n{'=' * 60}")
-    print(topic)
-    print("=" * 60)
-
     # -------------------------------------------------------------
-    # Duplicate Check
+    # Data Quality Validation
     # -------------------------------------------------------------
 
     duplicates = check_duplicate_events(
         transformed_df,
     )
-
-    print(
-        f"Duplicate events : {duplicates}"
-    )
-
-    # -------------------------------------------------------------
-    # Required Column Check
-    # -------------------------------------------------------------
 
     required_columns = required_columns_by_topic[
         topic
@@ -141,14 +132,6 @@ for topic in EVENT_SCHEMAS:
         transformed_df,
         required_columns,
     )
-
-    print(
-        f"Required ID nulls: {null_results}"
-    )
-
-    # -------------------------------------------------------------
-    # Monetary Checks
-    # -------------------------------------------------------------
 
     amount_columns = [
         column_name
@@ -166,11 +149,39 @@ for topic in EVENT_SCHEMAS:
         amount_columns,
     )
 
-    print(
-        f"Negative amounts : {negative_results}"
-    )
+    # -------------------------------------------------------------
+    # Fail Job on Critical Data Quality Issues
+    # -------------------------------------------------------------
 
-    
+    if duplicates > 0:
+        raise ValueError(
+            f"{topic}: {duplicates} duplicate events detected."
+        )
+
+    invalid_required_columns = {
+        column_name: count
+        for column_name, count in null_results.items()
+        if count > 0
+    }
+
+    if invalid_required_columns:
+        raise ValueError(
+            f"{topic}: required column validation failed: "
+            f"{invalid_required_columns}"
+        )
+
+    invalid_negative_values = {
+        column_name: count
+        for column_name, count in negative_results.items()
+        if count > 0
+    }
+
+    if invalid_negative_values:
+        raise ValueError(
+            f"{topic}: negative value validation failed: "
+            f"{invalid_negative_values}"
+        )
+
     # -------------------------------------------------------------
     # Write Silver
     # -------------------------------------------------------------
@@ -183,6 +194,6 @@ for topic in EVENT_SCHEMAS:
     )
 
     print(
-        f"Silver table written: "
+        f"Completed Silver processing: "
         f"dev.silver.{table_name}"
     )

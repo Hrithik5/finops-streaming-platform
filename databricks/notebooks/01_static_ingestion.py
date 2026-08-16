@@ -1,8 +1,18 @@
+"""
+01_static_ingestion.py
+
+Static seed data → Bronze ingestion.
+"""
+
 from streaming.bronze.static_ingestion import (
     read_static_csv,
     write_static_bronze,
 )
 
+
+# ---------------------------------------------------------------------
+# Static Datasets
+# ---------------------------------------------------------------------
 
 STATIC_DATASETS = {
     "merchant_bank_accounts": (
@@ -28,6 +38,10 @@ STATIC_DATASETS = {
 }
 
 
+# ---------------------------------------------------------------------
+# Process Each Dataset
+# ---------------------------------------------------------------------
+
 for dataset_name, path in STATIC_DATASETS.items():
 
     df = read_static_csv(
@@ -44,7 +58,5 @@ for dataset_name, path in STATIC_DATASETS.items():
         bronze_table,
     )
 
-    print(
-        f"{dataset_name:<25} : "
-        f"{df.count()} rows"
-    )
+
+print("Static Bronze ingestion completed successfully.")

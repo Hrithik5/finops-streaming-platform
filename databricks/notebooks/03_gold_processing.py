@@ -4,10 +4,10 @@
 Gold layer pipeline.
 
 Gold datasets:
-1. payment_performance      -> one row per payment
-2. merchant_performance     -> one row per merchant
-3. gateway_performance      -> one row per gateway
-4. financial_operations     -> one row per day
+1. payment_performance  -> one row per payment
+2. merchant_performance -> one row per merchant
+3. gateway_performance  -> one row per gateway
+4. financial_operations -> one row per day
 """
 
 from streaming.gold.metrics import (
@@ -16,7 +16,6 @@ from streaming.gold.metrics import (
     build_merchant_performance,
     build_payment_performance,
 )
-
 from streaming.gold.writer import write_gold
 
 
@@ -30,14 +29,6 @@ payments_df = spark.read.table(
 
 merchants_df = spark.read.table(
     "dev.silver.merchants"
-)
-
-customers_df = spark.read.table(
-    "dev.silver.customers"
-)
-
-invoices_df = spark.read.table(
-    "dev.silver.invoices"
 )
 
 gateways_df = spark.read.table(
@@ -85,29 +76,16 @@ payment_performance_df = build_payment_performance(
     settlements_df=settlements_df,
 )
 
-
-payment_rows = payment_performance_df.count()
-
-payment_distinct = (
-    payment_performance_df
-    .select("payment_id")
-    .distinct()
-    .count()
+payment_duplicate_count = (
+    payment_performance_df.count()
+    - payment_performance_df.select("payment_id").distinct().count()
 )
 
-print("=" * 70)
-print("PAYMENT PERFORMANCE")
-print("=" * 70)
-print(f"Rows              : {payment_rows}")
-print(f"Distinct payments : {payment_distinct}")
-print(
-    f"Duplicate rows    : "
-    f"{payment_rows - payment_distinct}"
-)
-
-display(
-    payment_performance_df.limit(20)
-)
+if payment_duplicate_count > 0:
+    raise ValueError(
+        "payment_performance contains "
+        f"{payment_duplicate_count} duplicate payment records."
+    )
 
 
 # =====================================================================
@@ -122,29 +100,16 @@ merchant_performance_df = build_merchant_performance(
     settlements_df=settlements_df,
 )
 
-
-merchant_rows = merchant_performance_df.count()
-
-merchant_distinct = (
-    merchant_performance_df
-    .select("merchant_id")
-    .distinct()
-    .count()
+merchant_duplicate_count = (
+    merchant_performance_df.count()
+    - merchant_performance_df.select("merchant_id").distinct().count()
 )
 
-print("=" * 70)
-print("MERCHANT PERFORMANCE")
-print("=" * 70)
-print(f"Rows               : {merchant_rows}")
-print(f"Distinct merchants : {merchant_distinct}")
-print(
-    f"Duplicate rows     : "
-    f"{merchant_rows - merchant_distinct}"
-)
-
-display(
-    merchant_performance_df.limit(20)
-)
+if merchant_duplicate_count > 0:
+    raise ValueError(
+        "merchant_performance contains "
+        f"{merchant_duplicate_count} duplicate merchant records."
+    )
 
 
 # =====================================================================
@@ -157,29 +122,16 @@ gateway_performance_df = build_gateway_performance(
     attempts_df=attempts_df,
 )
 
-
-gateway_rows = gateway_performance_df.count()
-
-gateway_distinct = (
-    gateway_performance_df
-    .select("gateway_id")
-    .distinct()
-    .count()
+gateway_duplicate_count = (
+    gateway_performance_df.count()
+    - gateway_performance_df.select("gateway_id").distinct().count()
 )
 
-print("=" * 70)
-print("GATEWAY PERFORMANCE")
-print("=" * 70)
-print(f"Rows              : {gateway_rows}")
-print(f"Distinct gateways : {gateway_distinct}")
-print(
-    f"Duplicate rows    : "
-    f"{gateway_rows - gateway_distinct}"
-)
-
-display(
-    gateway_performance_df.limit(20)
-)
+if gateway_duplicate_count > 0:
+    raise ValueError(
+        "gateway_performance contains "
+        f"{gateway_duplicate_count} duplicate gateway records."
+    )
 
 
 # =====================================================================
@@ -193,31 +145,16 @@ financial_operations_df = build_financial_operations(
     settlements_df=settlements_df,
 )
 
-
-financial_rows = financial_operations_df.count()
-
-financial_distinct = (
-    financial_operations_df
-    .select("operation_date")
-    .distinct()
-    .count()
+financial_duplicate_count = (
+    financial_operations_df.count()
+    - financial_operations_df.select("operation_date").distinct().count()
 )
 
-print("=" * 70)
-print("FINANCIAL OPERATIONS")
-print("=" * 70)
-print(f"Rows               : {financial_rows}")
-print(f"Distinct dates     : {financial_distinct}")
-print(
-    f"Duplicate rows     : "
-    f"{financial_rows - financial_distinct}"
-)
-
-display(
-    financial_operations_df.orderBy(
-        "operation_date"
+if financial_duplicate_count > 0:
+    raise ValueError(
+        "financial_operations contains "
+        f"{financial_duplicate_count} duplicate date records."
     )
-)
 
 
 # =====================================================================
@@ -249,19 +186,4 @@ write_gold(
 # Completion
 # =====================================================================
 
-print("=" * 70)
-print("GOLD LAYER COMPLETE")
-print("=" * 70)
-
-print(
-    "dev.gold.payment_performance"
-)
-print(
-    "dev.gold.merchant_performance"
-)
-print(
-    "dev.gold.gateway_performance"
-)
-print(
-    "dev.gold.financial_operations"
-)
+print("Gold layer processing completed successfully.")
