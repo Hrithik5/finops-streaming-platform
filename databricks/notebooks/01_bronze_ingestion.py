@@ -1,78 +1,96 @@
 """
-01_bronze_ingestion.py
+Bronze ingestion.
 
-Bronze ingestion pipeline.
+Responsibility:
+- Read events from Kafka using Structured Streaming.
+- Prepare raw Kafka records.
+- Write raw events to the Bronze Delta table.
 
-Reads events from Kafka and prepares them
-for the Bronze Delta layer.
+No business transformations.
+No topic-specific schemas.
 """
 
-from streaming.bronze.ingestion import (
-    prepare_bronze,
-    read_kafka,
-    write_bronze,
-)
-from streaming.config import get_kafka_options
+from pyspark.sql import DataFrame, SparkSession
 
 
 # ---------------------------------------------------------------------
-# Kafka Topics
-# ---------------------------------------------------------------------
-
-KAFKA_TOPICS = [
-    "chargeback-events",
-    "customer-events",
-    "invoice-events",
-    "merchant-events",
-    "payment-events",
-    "refund-events",
-    "settlement-events",
-]
-
-
-# ---------------------------------------------------------------------
-# Kafka Configuration
+# Kafka Reader
 # ---------------------------------------------------------------------
 
 
-# Credentials are retrieved from Databricks Secrets at runtime.
-KAFKA_OPTIONS = get_kafka_options(dbutils)
+def read_kafka(
+    spark: SparkSession,
+    kafka_options: dict[str, str],
+    topics: list[str],
+    starting_offsets: str = "earliest",
+) -> DataFrame:
+    """
+    Read Kafka events as a Structured Streaming DataFrame.
+    """
 
-if not KAFKA_OPTIONS:
-    raise ValueError(
-        "Kafka configuration is not available. "
-        "Provide runtime Kafka connection settings."
+    return (
+        spark.readStream
+        .format("kafka")
+        .options(**kafka_options)
+        .option("subscribe", ",".join(topics))
+        .option("startingOffsets", starting_offsets)
+        .load()
     )
 
-# ---------------------------------------------------------------------
-# Read Kafka
-# ---------------------------------------------------------------------
-
-kafka_df = read_kafka(
-    spark,
-    KAFKA_OPTIONS,
-    KAFKA_TOPICS,
-)
-
 
 # ---------------------------------------------------------------------
-# Prepare Bronze
+# Bronze Preparation
 # ---------------------------------------------------------------------
 
-bronze_df = prepare_bronze(
-    kafka_df,
-)
+
+def prepare_bronze(
+    df: DataFrame,
+) -> DataFrame:
+    """
+    Convert raw Kafka records into the Bronze structure.
+
+    Bronze columns:
+        topic
+        partition
+        offset
+        kafka_timestamp
+        raw_payload
+    """
+
+    return df.select(
+        "topic",
+        "partition",
+        "offset",
+        df.timestamp.alias("kafka_timestamp"),
+        df.value.cast("string").alias("raw_payload"),
+    )
 
 
 # ---------------------------------------------------------------------
-# Write Bronze
+# Bronze Writer
 # ---------------------------------------------------------------------
 
-write_bronze(
-    bronze_df,
-    "dev.bronze.raw_events",
-    "/Volumes/dev/stream/streaming_checkpoints/bronze",
-)
 
+def write_bronze(
+    df: DataFrame,
+    table_name: str,
+    checkpoint_location: str,
+) -> None:
+    """
+    Write Kafka streaming data to a Delta Bronze table.
 
-print("Bronze ingestion completed successfully.")
+    AvailableNow processes all currently available Kafka data,
+    commits the checkpoint, and then stops.
+    """
+
+    (
+        df.writeStream
+        .format("delta")
+        .outputMode("append")
+        .option(
+            "checkpointLocation",
+            checkpoint_location,
+        )
+        .trigger(availableNow=True)
+        .toTable(table_name)
+    )
