@@ -2,14 +2,15 @@
 Silver layer writer.
 
 Responsibility:
-- Write validated Silver DataFrames to Delta tables.
-- Generate Silver table names from Kafka topics.
+- Write validated Silver microbatches to Delta tables.
+- Maintain idempotent writes using Kafka topic/partition/offset.
 
 No parsing.
 No transformations.
 No data quality logic.
 """
 
+from delta.tables import DeltaTable
 from pyspark.sql import DataFrame
 
 
@@ -47,7 +48,7 @@ def topic_to_table_name(topic: str) -> str:
 
 
 # ---------------------------------------------------------------------
-# Write Silver
+# Incremental Silver Writer
 # ---------------------------------------------------------------------
 
 
@@ -58,7 +59,12 @@ def write_silver(
     schema: str = "silver",
 ) -> None:
     """
-    Write a validated DataFrame to its Silver Delta table.
+    Idempotently write a Silver microbatch to Delta.
+
+    Kafka records are uniquely identified by:
+        topic + partition + offset
+
+    Existing records are not rewritten.
     """
 
     table_name = (
@@ -67,10 +73,21 @@ def write_silver(
         f"{topic_to_table_name(topic)}"
     )
 
+    target = DeltaTable.forName(
+        df.sparkSession,
+        table_name,
+    )
+
     (
-        df.write
-        .format("delta")
-        .mode("overwrite")
-        .option("overwriteSchema", "true")
-        .saveAsTable(table_name)
+        target.alias("target")
+        .merge(
+            df.alias("source"),
+            """
+            target.topic = source.topic
+            AND target.partition = source.partition
+            AND target.offset = source.offset
+            """,
+        )
+        .whenNotMatchedInsertAll()
+        .execute()
     )

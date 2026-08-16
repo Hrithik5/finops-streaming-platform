@@ -1,20 +1,24 @@
 """
 02_silver_processing.py
 
-Silver processing pipeline.
+Incremental Silver processing pipeline.
 
 Flow:
-    Bronze
-      ↓
-    Parse
-      ↓
-    Flatten
-      ↓
-    Transform
-      ↓
-    Data Quality Validation
-      ↓
-    Silver
+    Bronze Delta Stream
+          ↓
+    foreachBatch
+          ↓
+        Parse
+          ↓
+       Flatten
+          ↓
+      Transform
+          ↓
+     Data Quality
+          ↓
+    Idempotent Silver Merge
+          ↓
+      Checkpoint
 """
 
 from streaming.silver.parser import (
@@ -35,19 +39,10 @@ from streaming.silver.writer import (
 
 
 # ---------------------------------------------------------------------
-# Read Bronze
-# ---------------------------------------------------------------------
-
-bronze_df = spark.read.table(
-    "dev.bronze.raw_events"
-)
-
-
-# ---------------------------------------------------------------------
 # Required Columns by Topic
 # ---------------------------------------------------------------------
 
-required_columns_by_topic = {
+REQUIRED_COLUMNS_BY_TOPIC = {
     "chargeback-events": [
         "chargeback_id",
         "merchant_id",
@@ -86,114 +81,169 @@ required_columns_by_topic = {
 
 
 # ---------------------------------------------------------------------
-# Process Each Topic
+# Silver Microbatch Processor
 # ---------------------------------------------------------------------
 
-for topic in EVENT_SCHEMAS:
 
-    # -------------------------------------------------------------
-    # Parse
-    # -------------------------------------------------------------
+def process_silver_batch(
+    batch_df,
+    batch_id: int,
+) -> None:
+    """
+    Process one incremental Bronze microbatch.
 
-    parsed_df = parse_event(
-        bronze_df,
-        topic,
-    )
+    Each batch contains only newly available Bronze records
+    according to the Bronze streaming checkpoint.
+    """
 
-    # -------------------------------------------------------------
-    # Flatten
-    # -------------------------------------------------------------
+    if batch_df.isEmpty():
+        return
 
-    flattened_df = flatten_event(
-        parsed_df,
-    )
+    for topic in EVENT_SCHEMAS:
 
-    # -------------------------------------------------------------
-    # Transform
-    # -------------------------------------------------------------
+        # -------------------------------------------------------------
+        # Parse
+        # -------------------------------------------------------------
 
-    transformed_df = transform_event(
-        flattened_df,
-    )
+        parsed_df = parse_event(
+            batch_df,
+            topic,
+        )
 
-    # -------------------------------------------------------------
-    # Data Quality Validation
-    # -------------------------------------------------------------
+        # -------------------------------------------------------------
+        # Flatten
+        # -------------------------------------------------------------
 
-    duplicates = check_duplicate_events(
-        transformed_df,
-    )
+        flattened_df = flatten_event(
+            parsed_df,
+        )
 
-    required_columns = required_columns_by_topic[
-        topic
-    ]
+        # -------------------------------------------------------------
+        # Transform
+        # -------------------------------------------------------------
 
-    null_results = check_required_columns(
-        transformed_df,
-        required_columns,
-    )
+        transformed_df = transform_event(
+            flattened_df,
+        )
 
-    amount_columns = [
-        column_name
-        for column_name in [
-            "amount",
-            "invoice_amount",
-            "refund_amount",
-            "settlement_amount",
+        # -------------------------------------------------------------
+        # Data Quality Validation
+        # -------------------------------------------------------------
+
+        duplicates = check_duplicate_events(
+            transformed_df,
+        )
+
+        if duplicates > 0:
+            raise ValueError(
+                f"{topic}: "
+                f"{duplicates} duplicate events detected "
+                f"in batch {batch_id}."
+            )
+
+        required_columns = (
+            REQUIRED_COLUMNS_BY_TOPIC[topic]
+        )
+
+        null_results = check_required_columns(
+            transformed_df,
+            required_columns,
+        )
+
+        invalid_required_columns = {
+            column_name: count
+            for column_name, count in null_results.items()
+            if count > 0
+        }
+
+        if invalid_required_columns:
+            raise ValueError(
+                f"{topic}: required column validation failed "
+                f"in batch {batch_id}: "
+                f"{invalid_required_columns}"
+            )
+
+        amount_columns = [
+            column_name
+            for column_name in [
+                "amount",
+                "invoice_amount",
+                "refund_amount",
+                "settlement_amount",
+            ]
+            if column_name in transformed_df.columns
         ]
-        if column_name in transformed_df.columns
-    ]
 
-    negative_results = check_negative_values(
-        transformed_df,
-        amount_columns,
-    )
-
-    # -------------------------------------------------------------
-    # Fail Job on Critical Data Quality Issues
-    # -------------------------------------------------------------
-
-    if duplicates > 0:
-        raise ValueError(
-            f"{topic}: {duplicates} duplicate events detected."
+        negative_results = check_negative_values(
+            transformed_df,
+            amount_columns,
         )
 
-    invalid_required_columns = {
-        column_name: count
-        for column_name, count in null_results.items()
-        if count > 0
-    }
+        invalid_negative_values = {
+            column_name: count
+            for column_name, count in negative_results.items()
+            if count > 0
+        }
 
-    if invalid_required_columns:
-        raise ValueError(
-            f"{topic}: required column validation failed: "
-            f"{invalid_required_columns}"
+        if invalid_negative_values:
+            raise ValueError(
+                f"{topic}: negative value validation failed "
+                f"in batch {batch_id}: "
+                f"{invalid_negative_values}"
+            )
+
+        # -------------------------------------------------------------
+        # Incremental Silver Write
+        # -------------------------------------------------------------
+
+        write_silver(
+            transformed_df,
+            topic,
         )
 
-    invalid_negative_values = {
-        column_name: count
-        for column_name, count in negative_results.items()
-        if count > 0
-    }
-
-    if invalid_negative_values:
-        raise ValueError(
-            f"{topic}: negative value validation failed: "
-            f"{invalid_negative_values}"
+        table_name = topic_to_table_name(
+            topic
         )
 
-    # -------------------------------------------------------------
-    # Write Silver
-    # -------------------------------------------------------------
+        print(
+            f"Batch {batch_id}: "
+            f"completed {topic} → "
+            f"dev.silver.{table_name}"
+        )
 
-    table_name = topic_to_table_name(topic)
 
-    write_silver(
-        transformed_df,
-        topic,
+# ---------------------------------------------------------------------
+# Read Bronze Incrementally
+# ---------------------------------------------------------------------
+
+bronze_stream_df = (
+    spark.readStream
+    .table("dev.bronze.raw_events")
+)
+
+
+# ---------------------------------------------------------------------
+# Start Silver Streaming Query
+# ---------------------------------------------------------------------
+
+silver_query = (
+    bronze_stream_df.writeStream
+    .foreachBatch(process_silver_batch)
+    .option(
+        "checkpointLocation",
+        "/Volumes/dev/stream/streaming_checkpoints/silver",
     )
+    .trigger(availableNow=True)
+    .start()
+)
 
-    print(
-        f"Completed Silver processing: "
-        f"dev.silver.{table_name}"
-    )
+
+# ---------------------------------------------------------------------
+# Wait for Completion
+# ---------------------------------------------------------------------
+
+silver_query.awaitTermination()
+
+print(
+    "Incremental Silver processing completed successfully."
+)
