@@ -2,7 +2,8 @@
 Bronze ingestion utilities.
 
 Responsibility:
-- Read events from Kafka.
+- Read events from Kafka using Structured Streaming.
+- Prepare raw Kafka records.
 - Write raw Kafka events to a Delta Bronze table.
 
 No business transformations.
@@ -12,30 +13,38 @@ No topic-specific schemas.
 from pyspark.sql import DataFrame, SparkSession
 
 
+# ---------------------------------------------------------------------
+# Kafka Reader
+# ---------------------------------------------------------------------
+
+
 def read_kafka(
     spark: SparkSession,
     kafka_options: dict[str, str],
     topics: list[str],
     starting_offsets: str = "earliest",
-    ending_offsets: str = "latest",
 ) -> DataFrame:
     """
-    Read events from Kafka into a Spark DataFrame.
-
-    This function performs no transformations.
+    Read events from Kafka as a Structured Streaming DataFrame.
     """
 
     return (
-        spark.read.format("kafka")
+        spark.readStream.format("kafka")
         .options(**kafka_options)
         .option("subscribe", ",".join(topics))
         .option("startingOffsets", starting_offsets)
-        .option("endingOffsets", ending_offsets)
         .load()
     )
 
 
-def prepare_bronze(df: DataFrame) -> DataFrame:
+# ---------------------------------------------------------------------
+# Bronze Preparation
+# ---------------------------------------------------------------------
+
+
+def prepare_bronze(
+    df: DataFrame,
+) -> DataFrame:
     """
     Convert raw Kafka records into the Bronze structure.
 
@@ -56,19 +65,30 @@ def prepare_bronze(df: DataFrame) -> DataFrame:
     )
 
 
+# ---------------------------------------------------------------------
+# Bronze Writer
+# ---------------------------------------------------------------------
+
+
 def write_bronze(
     df: DataFrame,
     table_name: str,
     checkpoint_location: str,
 ) -> None:
     """
-    Write Bronze data as a Delta table using Structured Streaming.
+    Write Kafka streaming data to the Bronze Delta table.
+
+    AvailableNow processes all currently available Kafka data,
+    commits the checkpoint, and then stops.
     """
 
     (
         df.writeStream.format("delta")
         .outputMode("append")
-        .option("checkpointLocation", checkpoint_location)
+        .option(
+            "checkpointLocation",
+            checkpoint_location,
+        )
         .trigger(availableNow=True)
         .toTable(table_name)
     )
