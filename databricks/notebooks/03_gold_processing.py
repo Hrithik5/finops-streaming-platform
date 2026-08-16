@@ -22,14 +22,19 @@ Flow:
 
 from streaming.gold.incremental_metrics import (
     build_incremental_payment_performance,
-)
-from streaming.gold.metrics import (
-    build_payment_performance,
-)
-from streaming.gold.writer import (
-    write_gold_incremental,
+    build_incremental_merchant_performance,
+    build_incremental_gateway_performance,
+    build_incremental_financial_operations,
 )
 
+from streaming.gold.metrics import (
+    build_payment_performance,
+    build_merchant_performance,
+    build_gateway_performance,
+    build_financial_operations,
+)
+
+from streaming.gold.writer import write_gold_incremental
 
 # =====================================================================
 # Read Silver Tables
