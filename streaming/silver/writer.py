@@ -13,7 +13,8 @@ No data quality logic.
 
 from delta.tables import DeltaTable
 from pyspark.sql import DataFrame
-
+from pyspark.sql import DataFrame, Window
+from pyspark.sql import functions as F
 
 # ---------------------------------------------------------------------
 # Topic → Silver Table
@@ -56,9 +57,7 @@ def topic_to_table_name(
     """Return the Silver table name for a Kafka topic."""
 
     if topic not in TOPIC_TABLE_MAPPING:
-        raise ValueError(
-            f"No Silver table mapping found for topic: {topic}"
-        )
+        raise ValueError(f"No Silver table mapping found for topic: {topic}")
 
     return TOPIC_TABLE_MAPPING[topic]
 
@@ -74,9 +73,7 @@ def topic_to_key_columns(
     """Return the business key columns for a Kafka topic."""
 
     if topic not in TOPIC_KEY_MAPPING:
-        raise ValueError(
-            f"No business key mapping found for topic: {topic}"
-        )
+        raise ValueError(f"No business key mapping found for topic: {topic}")
 
     return TOPIC_KEY_MAPPING[topic]
 
@@ -95,17 +92,33 @@ def write_silver(
     """
     Incrementally merge a validated microbatch into Silver.
 
-    Business keys are used instead of Kafka offsets so replayed
-    events do not create duplicate business records.
+    Business keys define record identity.
+    Duplicate keys inside the same microbatch are reduced
+    to the latest Kafka record before MERGE.
     """
 
-    table_name = (
-        f"{catalog}."
-        f"{schema}."
-        f"{topic_to_table_name(topic)}"
-    )
+    table_name = f"{catalog}.{schema}.{topic_to_table_name(topic)}"
 
     key_columns = topic_to_key_columns(topic)
+
+    # -------------------------------------------------------------
+    # Deduplicate incoming microbatch
+    # -------------------------------------------------------------
+
+    window = Window.partitionBy(*key_columns).orderBy(
+        F.col("kafka_timestamp").desc_nulls_last(),
+        F.col("partition").desc_nulls_last(),
+        F.col("offset").desc_nulls_last(),
+    )
+
+    deduplicated_df = (
+        df.withColumn(
+            "_row_number",
+            F.row_number().over(window),
+        )
+        .filter(F.col("_row_number") == 1)
+        .drop("_row_number")
+    )
 
     target = DeltaTable.forName(
         df.sparkSession,
@@ -113,14 +126,13 @@ def write_silver(
     )
 
     merge_condition = " AND ".join(
-        f"target.{column} = source.{column}"
-        for column in key_columns
+        f"target.{column} = source.{column}" for column in key_columns
     )
 
     (
         target.alias("target")
         .merge(
-            df.alias("source"),
+            deduplicated_df.alias("source"),
             merge_condition,
         )
         .whenMatchedUpdateAll()
