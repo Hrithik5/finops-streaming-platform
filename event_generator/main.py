@@ -1,21 +1,22 @@
 """
 main.py
 
-Event Generator
+Event Generator.
 
-Pipeline:
-1. Load seed datasets.
-2. Build events.
-3. Shuffle events.
-4. Publish events to Kafka.
+Modes:
+- SEED      : Publish the original seed events.
+- NEW_BATCH : Publish a controlled batch of genuinely new events.
 """
 
 from collections import Counter
 from time import perf_counter
 
+from batch_generator import build_new_event_batch
 from builder import build_events
 from config.settings import (
     EVENT_DELAY,
+    EVENT_MODE,
+    NEW_EVENT_COUNT,
     SEED_PATH,
 )
 from exceptions import KafkaConnectionError
@@ -28,6 +29,29 @@ from producer import (
 )
 from utils import shuffle_events, sleep_between_events
 
+
+# ---------------------------------------------------------------------
+# Build Events
+# ---------------------------------------------------------------------
+
+
+def build_event_batch(datasets):
+    """
+    Build events according to the configured generator mode.
+    """
+
+    if EVENT_MODE == "SEED":
+        return build_events(datasets)
+
+    if EVENT_MODE == "NEW_BATCH":
+        return build_new_event_batch(
+            datasets,
+            NEW_EVENT_COUNT,
+        )
+
+    raise ValueError(f"Unsupported EVENT_MODE: {EVENT_MODE}")
+
+
 # ---------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------
@@ -36,17 +60,24 @@ from utils import shuffle_events, sleep_between_events
 def main() -> None:
     """Run the Event Generator."""
 
-    logger.info("Loading seed datasets...")
+    logger.info(
+        "Starting Event Generator in %s mode.",
+        EVENT_MODE,
+    )
 
     datasets = load_datasets(SEED_PATH)
 
-    logger.info("Loaded %s datasets.", len(datasets))
+    logger.info(
+        "Loaded %s datasets.",
+        len(datasets),
+    )
 
-    logger.info("Building events...")
+    events = build_event_batch(datasets)
 
-    events = build_events(datasets)
-
-    logger.info("Generated %s events.", len(events))
+    logger.info(
+        "Generated %s events.",
+        len(events),
+    )
 
     # -----------------------------------------------------------------
     # Event Summary
@@ -63,11 +94,14 @@ def main() -> None:
         print(f"{topic:<25} : {count}")
 
     print(f"\nTotal Events: {len(events)}")
+
+    print(f"Mode        : {EVENT_MODE}")
+
     print("=" * 60)
     print()
 
     # -----------------------------------------------------------------
-    # Shuffle Events
+    # Shuffle
     # -----------------------------------------------------------------
 
     logger.info("Shuffling events...")
@@ -90,15 +124,22 @@ def main() -> None:
         logger.info("Kafka producer created successfully.")
 
         # -------------------------------------------------------------
-        # Publish Events
+        # Publish
         # -------------------------------------------------------------
 
         logger.info("Publishing events...")
 
         start_time = perf_counter()
 
-        for index, event in enumerate(events, start=1):
-            publish_event(producer, event)
+        for index, event in enumerate(
+            events,
+            start=1,
+        ):
+            publish_event(
+                producer,
+                event,
+            )
+
             sleep_between_events(EVENT_DELAY)
 
             if index % 100 == 0:
@@ -111,10 +152,11 @@ def main() -> None:
         end_time = perf_counter()
 
         # -------------------------------------------------------------
-        # Publishing Statistics
+        # Statistics
         # -------------------------------------------------------------
 
         duration = end_time - start_time
+
         events_per_second = len(events) / duration if duration > 0 else 0
 
         print()
@@ -130,11 +172,15 @@ def main() -> None:
         logger.info("Event Generator completed successfully.")
 
     except KafkaConnectionError as error:
-        logger.error("%s", error)
+        logger.error(
+            "%s",
+            error,
+        )
 
     finally:
         if producer is not None:
             close_producer(producer)
+
             logger.info("Kafka producer closed.")
 
 

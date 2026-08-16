@@ -21,6 +21,13 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 SEED_PATH = DATA_DIR / "seed"
 
+# ---------------------------------------------------------------------
+# Batch Event Generator
+# ---------------------------------------------------------------------
+
+EVENT_MODE = "NEW_BATCH"
+
+NEW_EVENT_COUNT = 25
 
 # ---------------------------------------------------------------------
 # Event Generator
