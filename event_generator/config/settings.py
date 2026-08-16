@@ -27,7 +27,7 @@ SEED_PATH = DATA_DIR / "seed"
 
 EVENT_MODE = "NEW_BATCH"
 
-NEW_EVENT_COUNT = 50
+NEW_LIFECYCLE_COUNT = 5
 
 # ---------------------------------------------------------------------
 # Event Generator

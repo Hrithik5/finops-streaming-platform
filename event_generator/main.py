@@ -16,7 +16,7 @@ from builder import build_events
 from config.settings import (
     EVENT_DELAY,
     EVENT_MODE,
-    NEW_EVENT_COUNT,
+    NEW_LIFECYCLE_COUNT,
     SEED_PATH,
 )
 from exceptions import KafkaConnectionError
@@ -36,9 +36,6 @@ from utils import shuffle_events, sleep_between_events
 
 
 def build_event_batch(datasets):
-    """
-    Build events according to the configured generator mode.
-    """
 
     if EVENT_MODE == "SEED":
         return build_events(datasets)
@@ -46,7 +43,7 @@ def build_event_batch(datasets):
     if EVENT_MODE == "NEW_BATCH":
         return build_new_event_batch(
             datasets,
-            NEW_EVENT_COUNT,
+            NEW_LIFECYCLE_COUNT,
         )
 
     raise ValueError(f"Unsupported EVENT_MODE: {EVENT_MODE}")
