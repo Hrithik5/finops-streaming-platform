@@ -1,3 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "finops-streaming-platform"
+version = "0.1.0"
+description = "Real-time FinOps streaming data platform"
+requires-python = ">=3.12"
+
+[tool.setuptools.packages.find]
+include = ["streaming*"]
+
 [tool.ruff]
 line-length = 88
 target-version = "py313"
