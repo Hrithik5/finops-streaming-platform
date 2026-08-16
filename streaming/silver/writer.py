@@ -2,8 +2,9 @@
 Silver layer writer.
 
 Responsibility:
-- Write validated Silver microbatches to Delta tables.
-- Maintain idempotent writes using Kafka topic/partition/offset.
+- Incrementally write validated Silver microbatches.
+- Deduplicate using business keys.
+- Prevent replayed Kafka records from creating duplicate business records.
 
 No parsing.
 No transformations.
@@ -15,7 +16,7 @@ from pyspark.sql import DataFrame
 
 
 # ---------------------------------------------------------------------
-# Topic → Silver Table Mapping
+# Topic → Silver Table
 # ---------------------------------------------------------------------
 
 TOPIC_TABLE_MAPPING = {
@@ -30,14 +31,29 @@ TOPIC_TABLE_MAPPING = {
 
 
 # ---------------------------------------------------------------------
+# Topic → Business Key
+# ---------------------------------------------------------------------
+
+TOPIC_KEY_MAPPING = {
+    "merchant-events": ["merchant_id"],
+    "customer-events": ["customer_id"],
+    "invoice-events": ["invoice_id"],
+    "payment-events": ["payment_id"],
+    "refund-events": ["refund_id"],
+    "chargeback-events": ["chargeback_id"],
+    "settlement-events": ["settlement_id"],
+}
+
+
+# ---------------------------------------------------------------------
 # Table Name
 # ---------------------------------------------------------------------
 
 
-def topic_to_table_name(topic: str) -> str:
-    """
-    Convert a Kafka topic into its Silver table name.
-    """
+def topic_to_table_name(
+    topic: str,
+) -> str:
+    """Return the Silver table name for a Kafka topic."""
 
     if topic not in TOPIC_TABLE_MAPPING:
         raise ValueError(
@@ -45,6 +61,24 @@ def topic_to_table_name(topic: str) -> str:
         )
 
     return TOPIC_TABLE_MAPPING[topic]
+
+
+# ---------------------------------------------------------------------
+# Business Key
+# ---------------------------------------------------------------------
+
+
+def topic_to_key_columns(
+    topic: str,
+) -> list[str]:
+    """Return the business key columns for a Kafka topic."""
+
+    if topic not in TOPIC_KEY_MAPPING:
+        raise ValueError(
+            f"No business key mapping found for topic: {topic}"
+        )
+
+    return TOPIC_KEY_MAPPING[topic]
 
 
 # ---------------------------------------------------------------------
@@ -59,12 +93,10 @@ def write_silver(
     schema: str = "silver",
 ) -> None:
     """
-    Idempotently write a Silver microbatch to Delta.
+    Incrementally merge a validated microbatch into Silver.
 
-    Kafka records are uniquely identified by:
-        topic + partition + offset
-
-    Existing records are not rewritten.
+    Business keys are used instead of Kafka offsets so replayed
+    events do not create duplicate business records.
     """
 
     table_name = (
@@ -73,21 +105,25 @@ def write_silver(
         f"{topic_to_table_name(topic)}"
     )
 
+    key_columns = topic_to_key_columns(topic)
+
     target = DeltaTable.forName(
         df.sparkSession,
         table_name,
+    )
+
+    merge_condition = " AND ".join(
+        f"target.{column} = source.{column}"
+        for column in key_columns
     )
 
     (
         target.alias("target")
         .merge(
             df.alias("source"),
-            """
-            target.topic = source.topic
-            AND target.partition = source.partition
-            AND target.offset = source.offset
-            """,
+            merge_condition,
         )
+        .whenMatchedUpdateAll()
         .whenNotMatchedInsertAll()
         .execute()
     )
