@@ -6,3 +6,6 @@ __pycache__/
 .DS_Store
 .opencode/
 .ruff_cache/
+build/
+dist/
+*.egg-info/

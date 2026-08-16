@@ -1,5 +1,0 @@
-Metadata-Version: 2.4
-Name: finops-streaming-platform
-Version: 0.1.1
-Summary: Real-time FinOps streaming data platform
-Requires-Python: >=3.12
