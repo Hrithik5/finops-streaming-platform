@@ -38,12 +38,6 @@ KAFKA_TOPICS = [
 # Credentials are retrieved from Databricks Secrets at runtime.
 KAFKA_OPTIONS = get_kafka_options(dbutils)
 
-# Loaded at runtime.
-# Credentials must not be hardcoded in this notebook.
-
-KAFKA_OPTIONS = {}
-
-
 if not KAFKA_OPTIONS:
     raise ValueError(
         "Kafka configuration is not available. "
