@@ -4,7 +4,7 @@ A production-style real-time data platform that ingests FinOps events from Kafka
 
 ## Architecture
 
-![FinOps Streaming Platform Architecture](docs/Architecture Diagram.png)
+![FinOps Streaming Platform Architecture](docs/architecture.png)
 
 ## Pipeline
 
