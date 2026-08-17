@@ -135,10 +135,11 @@ def process_silver_batch(
         )
 
         if duplicates > 0:
-            raise ValueError(
-                f"{topic}: "
-                f"{duplicates} duplicate events detected "
-                f"in batch {batch_id}."
+            print(
+                f"Batch {batch_id}: "
+                f"{topic} contains "
+                f"{duplicates} duplicate business records. "
+                f"Writer-level deduplication will handle them."
             )
 
         required_columns = (
