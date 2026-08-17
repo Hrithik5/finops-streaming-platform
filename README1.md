@@ -1,10 +1,10 @@
 # FinOps Real-Time Streaming Platform
 
-A production-style real-time data platform that ingests FinOps events from Kafka, processes them through Bronze → Silver → Gold Delta layers, and exposes business insights through Databricks AI/BI. fileciteturn9file0L1-L5
+A production-style real-time data platform that ingests FinOps events from Kafka, processes them through Bronze → Silver → Gold Delta layers, and exposes business insights through Databricks AI/BI.
 
 ## Architecture
 
-![FinOps Streaming Platform Architecture](docs/images/architecture.png)
+![FinOps Streaming Platform Architecture](docs/Architecture Diagram.png)
 
 ## Pipeline
 
@@ -37,7 +37,7 @@ EVENT_MODE = "NEW_BATCH"
 NEW_LIFECYCLE_COUNT = 5
 ```
 
-Generated IDs are UUID-style without semantic prefixes, and batches randomize amounts, statuses, timestamps, and source records. Events are published to seven Kafka topics. fileciteturn9file0L50-L84
+Generated IDs are UUID-style without semantic prefixes, and batches randomize amounts, statuses, timestamps, and source records. Events are published to seven Kafka topics. 
 
 ### Bronze
 
@@ -55,7 +55,7 @@ kafka_timestamp
 raw_payload
 ```
 
-Bronze uses Structured Streaming with `availableNow=True` and checkpointed Kafka offsets. fileciteturn9file0L88-L126 fileciteturn9file0L279-L299
+Bronze uses Structured Streaming with `availableNow=True` and checkpointed Kafka offsets.
 
 ### Silver
 
@@ -85,7 +85,7 @@ Business-Key Deduplication
 Delta MERGE
 ```
 
-Silver validates required fields and financial values, and deduplicates replayed events before MERGE. fileciteturn9file0L130-L170
+Silver validates required fields and financial values, and deduplicates replayed events before MERGE.
 
 ### Gold
 
@@ -105,7 +105,7 @@ gateway_performance      → 1 row / gateway
 financial_operations     → 1 row / operation date
 ```
 
-Gold updates only affected business keys instead of rebuilding all historical data. fileciteturn9file0L174-L200
+Gold updates only affected business keys instead of rebuilding all historical data.
 
 ## Incremental Processing
 
@@ -127,7 +127,7 @@ gateway_id
 operation_date
 ```
 
-This keeps each scheduled run incremental. fileciteturn9file0L279-L336
+This keeps each scheduled run incremental.
 
 ## Checkpoints
 
@@ -139,13 +139,13 @@ Examples:
 /Volumes/dev/stream/streaming_checkpoints/gold_payment
 ```
 
-Checkpoints preserve streaming state and Kafka progress so previously processed data is not reread on normal runs. fileciteturn9file0L340-L360
+Checkpoints preserve streaming state and Kafka progress so previously processed data is not reread on normal runs.
 
 ## Deduplication & Idempotency
 
 Kafka offsets identify transport records; business keys identify business entities.
 
-Within a microbatch, duplicate business keys are reduced to the latest record using Kafka timestamp, partition, and offset. Replayed events are handled through business-key MERGE, making Silver replay-safe. fileciteturn9file0L364-L408
+Within a microbatch, duplicate business keys are reduced to the latest record using Kafka timestamp, partition, and offset. Replayed events are handled through business-key MERGE, making Silver replay-safe.
 
 ## Data Quality
 
@@ -157,7 +157,7 @@ Duplicate business records
 Negative financial values
 ```
 
-Critical validation failures stop the pipeline rather than silently producing invalid Gold data. fileciteturn9file0L412-L439
+Critical validation failures stop the pipeline rather than silently producing invalid Gold data.
 
 ## Orchestration
 
@@ -173,11 +173,11 @@ Static_Ingestion → Silver_Processing_Static
                       Gold_Processing
 ```
 
-The job runs every **5 minutes**; each streaming task processes the currently available data and completes. fileciteturn9file0L443-L467
+The job runs every **5 minutes**; each streaming task processes the currently available data and completes.
 
 ## Static / Reference Data
 
-Reference CSV data is ingested separately and used by Silver/Gold for enrichment. This branch includes merchant bank accounts, payment methods, payment gateways, payment attempts, and payment events. fileciteturn9file0L674-L701
+Reference CSV data is ingested separately and used by Silver/Gold for enrichment. This branch includes merchant bank accounts, payment methods, payment gateways, payment attempts, and payment events.
 
 ## How to Run
 
@@ -189,7 +189,7 @@ KAFKA_API_KEY
 KAFKA_API_SECRET
 ```
 
-Never commit credentials to GitHub. fileciteturn9file0L471-L485
+Never commit credentials to GitHub.
 
 ### Generate Events
 
@@ -205,7 +205,7 @@ Then:
 python event_generator/main.py
 ```
 
-The generator reports topic counts, total events, publishing time, and throughput. fileciteturn9file0L489-L519
+The generator reports topic counts, total events, publishing time, and throughput.
 
 ### Run Databricks
 
@@ -215,7 +215,7 @@ The scheduled Job processes:
 Kafka → Bronze → Silver → Gold
 ```
 
-Do not reset checkpoints during normal operation. fileciteturn9file0L523-L536
+Do not reset checkpoints during normal operation.
 
 ## Validation
 
@@ -276,7 +276,7 @@ Databricks AI/BI consumes the Gold layer and provides:
 - Refund Amount
 - Chargeback Amount
 
-The analytics layer demonstrates how engineered Gold data becomes business insight. fileciteturn9file0L599-L617
+The analytics layer demonstrates how engineered Gold data becomes business insight.
 
 ## Screenshots
 
@@ -329,7 +329,7 @@ finops-streaming-platform/
 - Scheduled orchestration
 - Replay/recovery handling
 - Business-ready Gold datasets
-- Databricks AI/BI consumption fileciteturn9file0L708-L730
+- Databricks AI/BI consumption 
 
 ## Validation Status
 
@@ -344,7 +344,7 @@ Tested with:
 - Gold grain validation
 - Data quality failures and recovery
 
-The final pipeline completed scheduled end-to-end runs successfully. fileciteturn9file0L734-L748
+The final pipeline completed scheduled end-to-end runs successfully.
 
 ## Future Improvements
 
