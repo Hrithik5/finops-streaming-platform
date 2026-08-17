@@ -258,8 +258,6 @@ Expected:
 0
 ```
 
-fileciteturn9file0L540-L593
-
 ## Analytics
 
 Databricks AI/BI consumes the Gold layer and provides:
@@ -282,11 +280,12 @@ The analytics layer demonstrates how engineered Gold data becomes business insig
 
 ### Databricks Job
 
-![Databricks FinOps Data Pipeline Job](docs/images/databricks-job.png)
+![Databricks FinOps Data Pipeline Job](docs/Pipeline.png)
 
-### Databricks AI/BI Dashboard
+### Databricks AI/BI Dashboard Results
 
-![FinOps AI/BI Dashboard](docs/images/finops-dashboard.png)
+![FinOps AI/BI Dashboard](docs/Dashboard1.png)
+![FinOps AI/BI Dashboard](docs/Dashboard2.png)
 
 ## Technology Stack
 
@@ -306,14 +305,59 @@ The analytics layer demonstrates how engineered Gold data becomes business insig
 
 ```text
 finops-streaming-platform/
-├── databricks/notebooks/
+│
+├── data/
+│   └── seed/
+│
+├── databricks/
+│   └── notebooks/
+│       ├── 01_bronze_ingestion.py
+│       ├── 01_static_ingestion.py
+│       ├── 01_static_silver_processing.py
+│       ├── 02_silver_processing.py
+│       └── 03_gold_processing.py
+│
 ├── event_generator/
+│   ├── config/
+│   │   └── settings.py
+│   ├── batch_generator.py
+│   ├── builder.py
+│   ├── loader.py
+│   ├── main.py
+│   ├── producer.py
+│   └── topics.py
+│
+├── kafka/
+│   ├── docker-compose.yml
+|
 ├── streaming/
 │   ├── bronze/
+│   │   └── ingestion.py
+|   |.  └── static_ingestion.py
+│   │
 │   ├── silver/
+│   │   ├── parser.py
+│   │   ├── quality.py
+│   │   ├── schemas.py
+│   │   ├── transformer.py
+│   │   ├─- writer.py
+|   |.  ├── static_parser.py
+│   │   ├── static_quality.py
+│   │   ├── static_transformer.py
+│   │   └── static_writer.py
+│   │
 │   └── gold/
+│       ├── incremental_metrics.py
+│       ├── metrics.py
+│       └── writer.py
+│
 ├── tests/
+│
 ├── docs/
+│     ├── architecture.png
+│     ├── databricks-job.png
+│     └── finops-dashboard.png
+│
 ├── pyproject.toml
 └── README.md
 ```
@@ -358,5 +402,5 @@ The final pipeline completed scheduled end-to-end runs successfully.
 
 ## Author
 
-**Hrithik**  
+**Hrithik Chauhan**  
 Cloud & Data Engineer
